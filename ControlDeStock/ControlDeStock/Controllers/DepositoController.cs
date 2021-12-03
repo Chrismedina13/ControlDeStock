@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ControlDeStock.Context;
+using ControlDeStock.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ControlDeStock.Controllers
 {
@@ -11,17 +14,36 @@ namespace ControlDeStock.Controllers
     [ApiController]
     public class DepositoController : ControllerBase
     {
-        [HttpGet("Leer")]
-        public string LecturaGet(int id) {
+        private readonly AppDBContext context;
 
-            return "Hola";
-        }
-
-        [HttpGet("Buscar")]
-        public string BusquedaGet(int id)
+        public DepositoController(AppDBContext context)
         {
-
-            return "Chau";
+            this.context = context;
         }
+
+        // GET: api/<DepositoController>
+        [HttpGet]
+        public IEnumerable<Deposito> Get()
+        {
+            return context.Deposito.ToList();
+        }
+
+        // POST api/<DepositoController>
+        [HttpPost]
+        public ActionResult Post(Deposito deposito)
+        {
+            try
+            {
+                context.Deposito.Add(deposito);
+                context.SaveChanges();
+                return Ok();
+            }
+            catch(Exception ex) {
+
+                return BadRequest();
+            }
+            
+        }
+
     }
 }
