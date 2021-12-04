@@ -22,7 +22,7 @@ go
 CREATE TABLE UbicacionProducto(
     DepositoID      varchar(4)     NOT NULL,
     CodUbicacion    varchar(11)    NOT NULL,
-    ProductoID      varchar(11)    NOT NULL,
+    ProductoID      varchar(20)    NOT NULL,
     Cantidad        int            NOT NULL,
     CONSTRAINT PK3 PRIMARY KEY NONCLUSTERED (DepositoID, CodUbicacion, ProductoID)
 )
