@@ -10,10 +10,10 @@ go
 CREATE TABLE Ubicacion(
     DepositoID      varchar(4)     NOT NULL,
     CodUbicacion    varchar(11)    NOT NULL,
-    Area            varchar(2)     NOT NULL,
-    Pasillo         varchar(2)     NOT NULL,
-    Fila            varchar(2)     NOT NULL,
-    Cara            varchar(2)     NOT NULL,
+    Area            varchar(20)     NOT NULL,
+    Pasillo         varchar(20)     NOT NULL,
+    Fila            varchar(20)     NOT NULL,
+    Cara            varchar(20)     NOT NULL,
     CONSTRAINT PK2 PRIMARY KEY NONCLUSTERED (DepositoID, CodUbicacion)
 )
 go

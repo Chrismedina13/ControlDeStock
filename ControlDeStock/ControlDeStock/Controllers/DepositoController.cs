@@ -1,6 +1,7 @@
 ﻿using ControlDeStock.Context;
 using ControlDeStock.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,9 +41,52 @@ namespace ControlDeStock.Controllers
             }
             catch(Exception ex) {
 
-                return BadRequest();
+                return BadRequest(ex.Message);
             }
             
+        }
+
+        [HttpPut("{id}")]
+        public ActionResult PutDesposito(string id, Deposito deposito)
+        {
+            if (id != deposito.DepositoID)
+            {
+                return BadRequest();
+            }
+
+            context.Entry(deposito).State = EntityState.Modified;
+
+            try
+            {
+                context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!context.Deposito.Any(e => e.DepositoID == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok();
+        }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Deposito>> Delete(string id)
+        {
+            Deposito deposito = await context.Deposito.FindAsync(id);
+            if (deposito == null)
+            {
+                return NotFound();
+            }
+
+            context.Deposito.Remove(deposito);
+            await context.SaveChangesAsync();
+
+            return deposito;
         }
 
     }
