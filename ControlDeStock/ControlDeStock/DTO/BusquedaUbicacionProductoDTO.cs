@@ -8,10 +8,10 @@ namespace ControlDeStock.DTO
 {
     public class BusquedaUbicacionProductoDTO
     {
-        public BusquedaUbicacionProductoDTO(UbicacionProducto ubicacionProducto)
+        public BusquedaUbicacionProductoDTO(string codUbicacion, int cantidad)
         {
-            this.UbicacionID = ubicacionProducto.CodUbicacion;
-            this.Cantidad = ubicacionProducto.Cantidad;
+            this.UbicacionID = codUbicacion;
+            this.Cantidad = cantidad;
         }
 
         public string UbicacionID { get; set; }

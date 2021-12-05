@@ -99,10 +99,34 @@ namespace ControlDeStock.Managers
             return valido;
         }
 
-        public IEnumerable<BusquedaUbicacionProductoDTO> GetBusquedaUbicaciones(string depositoID, string productoID)
+        public List<BusquedaUbicacionProductoDTO> GetBusquedaUbicaciones(string depositoID, string productoID)
         {
-            List<UbicacionProducto> ubicacionProductos = context.UbicacionProducto.Where(x => x.DepositoID == depositoID && x.ProductoID == productoID).ToList();
-            return ubicacionProductos.Select(x => new BusquedaUbicacionProductoDTO(x)).ToList();
+            UbicacionManager manUbicacion = new UbicacionManager(context);
+            List<BusquedaUbicacionProductoDTO> busquedaUbicacionProductoDTOLista = new List<BusquedaUbicacionProductoDTO>();
+            List<string> ubicaciones = manUbicacion.GetUbicacionesDePosito(depositoID);
+            foreach (string ubicacion in ubicaciones) {
+                int cantidadDisponibleEnDeposito = this.ObtenerCantidadDisponibleEnDepositoUbicacion(depositoID, ubicacion, productoID);
+                busquedaUbicacionProductoDTOLista.Add(new BusquedaUbicacionProductoDTO(ubicacion,cantidadDisponibleEnDeposito));
+            }
+            return busquedaUbicacionProductoDTOLista;
+        }
+
+        private int ObtenerCantidadDisponibleEnDepositoUbicacion(string depositoID, string ubicacion, string productoID)
+        {
+            int cantidadDisponible = 0;
+            List<UbicacionProducto> productoUbicaciones = new List<UbicacionProducto>();
+            productoUbicaciones = context.UbicacionProducto.Where(x => x.DepositoID == depositoID && x.CodUbicacion == ubicacion).ToList();
+            if (productoUbicaciones.Count == Constantes.ProductosDiferentesEnUbicacion)
+            {
+                if (productoUbicaciones.Any(x => x.ProductoID == productoID))
+                    cantidadDisponible = Constantes.CantidadMaximaDeUnidadesEnUbicacion - productoUbicaciones.Sum(x => x.Cantidad);
+                else
+                    cantidadDisponible = 0;
+            }
+            else
+                cantidadDisponible = Constantes.CantidadMaximaDeUnidadesEnUbicacion - productoUbicaciones.Sum(x => x.Cantidad);
+
+            return cantidadDisponible;
         }
 
         public List<LecturaUbicacionProductoDTO> GetLecturaProductos(string depositoID, string codUbicacion)

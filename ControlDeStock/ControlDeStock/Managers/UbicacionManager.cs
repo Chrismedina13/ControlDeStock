@@ -25,7 +25,7 @@ namespace ControlDeStock.Managers
         {
             string errores = null;
             DepositoManager manDeposito = new DepositoManager(context);
-            if (manDeposito.ValidarExistencia(ubicacion.DepositoID))
+            if (!manDeposito.ValidarExistencia(ubicacion.DepositoID))
                 errores += "Deposito no valido\n";
             if (!this.FormatoCodUbicacionValido(ubicacion.CodUbicacion))
                 errores += errores + "Codigo de ubicación invalido";
@@ -88,5 +88,9 @@ namespace ControlDeStock.Managers
             return productoAlmacenado;
         }
 
+        public List<string> GetUbicacionesDePosito(string depositoID)
+        {
+            return context.Ubicacion.Where(x => x.DepositoID == depositoID).Select(x => x.CodUbicacion).ToList();
+        }
     }
 }
