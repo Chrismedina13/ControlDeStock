@@ -1,4 +1,5 @@
 ﻿using ControlDeStock.Context;
+using ControlDeStock.DTO;
 using ControlDeStock.Models;
 using ControlDeStock.Utils;
 using System;
@@ -96,6 +97,18 @@ namespace ControlDeStock.Managers
                 valido = false;
 
             return valido;
+        }
+
+        public IEnumerable<BusquedaUbicacionProductoDTO> GetBusquedaUbicaciones(string depositoID, string productoID)
+        {
+            List<UbicacionProducto> ubicacionProductos = context.UbicacionProducto.Where(x => x.DepositoID == depositoID && x.ProductoID == productoID).ToList();
+            return ubicacionProductos.Select(x => new BusquedaUbicacionProductoDTO(x)).ToList();
+        }
+
+        public List<LecturaUbicacionProductoDTO> GetLecturaProductos(string depositoID, string codUbicacion)
+        {
+            List<UbicacionProducto> ubicacionProductos = context.UbicacionProducto.Where(x => x.DepositoID == depositoID && x.CodUbicacion == codUbicacion).ToList();
+            return ubicacionProductos.Select(x => new LecturaUbicacionProductoDTO(x)).ToList();
         }
 
         public bool ValidarCantidadDeProductosDistintos(UbicacionProducto ubicacionProducto)

@@ -1,4 +1,5 @@
 ﻿using ControlDeStock.Context;
+using ControlDeStock.DTO;
 using ControlDeStock.Managers;
 using ControlDeStock.Models;
 using Microsoft.AspNetCore.Http;
@@ -96,9 +97,18 @@ namespace ControlDeStock.Controllers
             return Ok();
         }
 
-        //[HttpGet]
-        //public HttpGetAttribute() { 
+        [HttpGet("Lectura/{depositoID}/{ubicacionID}")]
+        public IEnumerable<LecturaUbicacionProductoDTO> GetLectura(string depositoID, string ubicacionID)
+        {
+            UbicacionProductoManager manUbicacionProducto = new UbicacionProductoManager(context);
+            return manUbicacionProducto.GetLecturaProductos(depositoID, ubicacionID);
+        }
 
-        //}
+        [HttpGet("Busqueda/{depositoID}/{productoID}")]
+        public IEnumerable<BusquedaUbicacionProductoDTO> GetBusqueda(string depositoID, string productoID)
+        {
+            UbicacionProductoManager manUbicacionProducto = new UbicacionProductoManager(context);
+            return manUbicacionProducto.GetBusquedaUbicaciones(depositoID, productoID);
+        }
     }
 }
