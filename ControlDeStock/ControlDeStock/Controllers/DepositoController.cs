@@ -19,6 +19,7 @@ namespace ControlDeStock.Controllers
 
         public DepositoController(AppDBContext context)
         {
+            context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             this.context = context;
         }
 

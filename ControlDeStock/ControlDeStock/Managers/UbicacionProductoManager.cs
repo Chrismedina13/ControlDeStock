@@ -56,6 +56,31 @@ namespace ControlDeStock.Managers
 
         }
 
+        public string ValidarModficacion(UbicacionProducto ubicacionProducto)
+        {
+            string errores = null;
+            if (!this.ExisteProductoEnUbicacion(ubicacionProducto.ProductoID, ubicacionProducto.DepositoID, ubicacionProducto.CodUbicacion))
+                errores += "Registro a actualizar inexistente";
+            else {
+
+                UbicacionProducto ubicacionGuardada = context.UbicacionProducto.First(x => x.DepositoID == ubicacionProducto.DepositoID && x.CodUbicacion == ubicacionProducto.CodUbicacion && x.ProductoID == ubicacionProducto.ProductoID);
+                if (ubicacionGuardada.Cantidad - ubicacionProducto.Cantidad < 0)
+                    errores += "Stock insuficiente";
+            }
+
+            return errores;
+        }
+
+        public int ObtenerStockProducto(string depositoID, string codUbicacion, string productoID)
+        {
+            int stockActual = 0;
+            UbicacionProducto ubicacionProducto = context.UbicacionProducto.First(x => x.DepositoID == depositoID && x.CodUbicacion == codUbicacion && x.ProductoID == productoID);
+            if (ubicacionProducto != null)
+                stockActual = ubicacionProducto.Cantidad;
+
+            return stockActual;
+        }
+
         public bool ExisteProductoEnUbicacion(string productoID, string depositoID, string codUbicacion)
         {
             return context.UbicacionProducto.Any(x => x.DepositoID == depositoID && x.CodUbicacion == codUbicacion && x.ProductoID == productoID);
@@ -85,5 +110,6 @@ namespace ControlDeStock.Managers
 
             return valido;
         }
+
     }
 }

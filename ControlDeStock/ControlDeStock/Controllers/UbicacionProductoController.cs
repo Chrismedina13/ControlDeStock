@@ -19,6 +19,7 @@ namespace ControlDeStock.Controllers
 
         public UbicacionProductoController(AppDBContext context)
         {
+            context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             this.context = context;
         }
 
@@ -61,9 +62,43 @@ namespace ControlDeStock.Controllers
             }
         }
 
+        [HttpPut]
+        public ActionResult Put(UbicacionProducto ubicacionProducto)
+        {
+            string errores = null;
+            int stockActual = 0;
+            UbicacionProductoManager manUbicacionProducto = new UbicacionProductoManager(context);
+            try
+            {
+                errores = manUbicacionProducto.ValidarModficacion(ubicacionProducto);                
+                if (errores == null)
+                {
+                    stockActual = manUbicacionProducto.ObtenerStockProducto(ubicacionProducto.DepositoID, ubicacionProducto.CodUbicacion, ubicacionProducto.ProductoID);
+                    if (stockActual - ubicacionProducto.Cantidad == 0) {
+                        UbicacionProducto ubicacionGuardada = context.UbicacionProducto.First(x => x.DepositoID == ubicacionProducto.DepositoID && x.CodUbicacion == ubicacionProducto.CodUbicacion && x.ProductoID == ubicacionProducto.ProductoID);
+                        context.UbicacionProducto.Remove(ubicacionGuardada);
+                    }
+                    else {
+                        ubicacionProducto.Cantidad = stockActual - ubicacionProducto.Cantidad;
+                        context.UbicacionProducto.Update(ubicacionProducto);
+                    }
+                    context.SaveChangesAsync();
+                }
+                else
+                    return BadRequest(errores);
+
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
+
         //[HttpGet]
         //public HttpGetAttribute() { 
-        
+
         //}
     }
 }
